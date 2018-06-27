@@ -10,6 +10,22 @@ namespace crmLogCleanup
     {
         static void Main(string[] args)
         {
+            string inputArgs = "crmLogCleanup";
+
+            if (args == null)
+            {
+                Console.WriteLine("No Customer info found");
+            }
+            else
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    string argument = args[i];
+                    inputArgs = args[0];
+                }
+            }
+
+
 
             Console.WriteLine(args);
             Console.Read();
