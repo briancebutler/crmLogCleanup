@@ -25,9 +25,14 @@ namespace crmLogCleanup
                 }
             }
 
+            string[] cmdArgs = inputArgs.Split('/');
 
+            foreach(string incident in cmdArgs)
+            {
+                Console.WriteLine(incident);
+            }
 
-            Console.WriteLine(args);
+            //Console.WriteLine(args[0]);
             Console.Read();
 
         }
