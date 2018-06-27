@@ -10,6 +10,10 @@ namespace crmLogCleanup
     {
         static void Main(string[] args)
         {
+
+            Console.WriteLine(args);
+            Console.Read();
+
         }
     }
 }
