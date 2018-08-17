@@ -62,7 +62,6 @@ namespace crmLogCleanup
             {
                 if(incident.Contains("-"))
                 {
-                    //Console.WriteLine(incident);
                     openIncidentList.Add(incident);
                 }
             }
@@ -82,14 +81,11 @@ namespace crmLogCleanup
             Console.WriteLine("Tickets marked as not Active in SQLite Database");
             foreach (string objFolderDelete in sqliteDeleteFolder)
             {
-                //Console.WriteLine(objFolderDelete + "Hello");
                 string sqlQuery = "UPDATE Incident SET Active = 'NO' WHERE Ticket ='" + objFolderDelete + "'";
                 Console.WriteLine(sqlQuery);
                 SQLiteCommand command2 = new SQLiteCommand(sqlQuery, m_dbConnection);
-                
                 command2.ExecuteNonQuery();
-                //Console.WriteLine(sqlQuery + "Hello WTF");
-                
+               
             }
 
 
