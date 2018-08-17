@@ -287,7 +287,7 @@ namespace crmLogCleanup
 
 
             //Folder cleanup
-
+            Console.WriteLine("Cleaning up emtpy folders:");
             var subDirs = Directory.GetDirectories(root);
 
             foreach (string dir in subDirs)
