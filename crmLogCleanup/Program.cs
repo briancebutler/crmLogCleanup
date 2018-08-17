@@ -71,10 +71,9 @@ namespace crmLogCleanup
                                  
             foreach (string objTicket in sqliteTicket)
             {
-                //Console.WriteLine(objTicket);
+
                 if (!openIncidentList.Contains(objTicket))
                 {
-                    //Console.WriteLine(objTicket + ": objTicket");
                     sqliteDeleteFolder.Add(objTicket);
                 }
             }
@@ -101,10 +100,7 @@ namespace crmLogCleanup
             SQLiteDataReader reader2 = command3.ExecuteReader();
             while (reader2.Read())
             {
-                //sqliteTicket.Add(Convert.ToString(reader["Ticket"]));
                 sqliteFolderSelected.Add(Convert.ToString(reader2["FolderSelected"]));
-                //sqliteDeleted.Add(Convert.ToString(reader["Deleted"]));
-                //Console.WriteLine("Ticket#: " + reader["Ticket"] + "\tFolderSelected: " + reader["FolderSelected"] + "\tDeleted: " +reader["Deleted"]);
             }
             //Query SQLite DB
 
