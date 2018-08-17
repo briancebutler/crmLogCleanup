@@ -158,22 +158,14 @@ namespace crmLogCleanup
 
             foreach (string dir in subDirs)
             {
-                //Console.WriteLine(dir);
-
-                    //Console.WriteLine(dir);
                 if (!Directory.EnumerateDirectories(dir).Any())
                 {
                     Console.WriteLine(dir);
                     Directory.Delete(dir);
                 }
                 
-
             }
-            
-
-            //bool isEmpty = !Directory.EnumerateFiles(path).Any();
-
-
+            //Folder cleanup
 
             Console.WriteLine("Done Exit ....");
             Console.Read();
