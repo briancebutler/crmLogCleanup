@@ -11,48 +11,23 @@ namespace crmLogCleanup
     class Program
     {
 
-
-        public static List<string> GetFilesAndFolders(string root, int depth)
-        {
-            var list = new List<string>();
-            foreach (var directory in Directory.EnumerateDirectories(root))
-            //foreach (var directory in Path.GetFileName(root))
-                {
-                list.Add(directory);
-                if (depth > 0)
-                {
-                    list.AddRange(GetFilesAndFolders(directory, depth - 1));
-                }
-            }
-
-            list.AddRange(Directory.EnumerateFiles(root));
-
-            return list;
-        }
-
-
-
         static void Main(string[] args)
         {
             string inputArgs = "crmLogCleanup";
             string root = "C:\\~LogFiles\\~CurrentLogs";
             List<string> openIncidentList = new List<string>(); //List for tar file selection
             List<string> dirList = new List<string>(); //List for tar file selection
-            List<string> content = GetFilesAndFolders(root, 2);
             List<string> ticketFolderNumberList = new List<string>(); //list to store just the ticket number from the existing folders.
-            //string sqliteDB = "F:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db";
+            List<string> sqliteTicket = new List<string>();
+            List<string> sqliteFolderSelected = new List<string>();
+            List<string> sqliteDeleted = new List<string>();
+            List<string> sqliteDeleteFolder = new List<string>();
 
             // Open SQLite DB
-            //SQLiteConnection.CreateFile(sqlLiteDBFile);
             SQLiteConnection m_dbConnection;
             m_dbConnection = new SQLiteConnection("Data Source=F:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
             m_dbConnection.Open();
             // Open SQLite DB
-
-            List<string> sqliteTicket = new List<string>();
-            List<string> sqliteFolderSelected = new List<string>();
-            List<string> sqliteDeleted = new List<string>();
-
 
             //Query SQLite DB
             string sql = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
@@ -61,29 +36,11 @@ namespace crmLogCleanup
             while (reader.Read())
             {
                 sqliteTicket.Add(Convert.ToString(reader["Ticket"]));
-                //sqliteFolderSelected.Add(Convert.ToString(reader["FolderSelected"]));
                 sqliteDeleted.Add(Convert.ToString(reader["Deleted"]));
-                //Console.WriteLine("Ticket#: " + reader["Ticket"] + "\tFolderSelected: " + reader["FolderSelected"] + "\tDeleted: " +reader["Deleted"]);
             }
             //Query SQLite DB
 
-
-            //Console.WriteLine("\nFolder from sqlite list: :sqliteFolderSelected:");
-            //foreach(string objFolder in sqliteFolderSelected)
-            //{
-            //    Console.WriteLine(objFolder);
-            //}
-
-            //Console.WriteLine("\nDeleted from sqlite list: :sqliteDeleted:");
-            //foreach (string objDeleted in sqliteFolderSelected)
-            //{
-            //    Console.WriteLine(objDeleted);
-            //}
-
-
-            
-
-
+            //Import input arguments
             if (args == null)
             {
                 Console.WriteLine("No Customer info found");
@@ -108,96 +65,10 @@ namespace crmLogCleanup
                     //Console.WriteLine(incident);
                     openIncidentList.Add(incident);
                 }
-                
-                
             }
+            //Import input arguments
 
-            //Console.WriteLine("\nOpen Tickets - :openIncidentList:");
-
-            //foreach (string tr in openIncidentList)
-            //{
-            //    Console.WriteLine(tr);
-            //}
-
-            //Console.WriteLine("\nLog directory's - :dirList:");
-
-            foreach (string subDirList in content)
-            {
-                if (subDirList.Contains("sendLogFiles"))
-                {
-
-
-                    //Console.WriteLine(subDirList);
-                    
-                }
-                else if(subDirList.Contains("18"))
-                {
-                    dirList.Add(subDirList);//Full path to existing folders on the file system that are for a ticket.
-                    ticketFolderNumberList.Add(Path.GetFileName(subDirList));
-                }
-
-            }
-
-
-            //Console.WriteLine("\nTicket Folders - :ticketFolderNumberList:");
-
-            //foreach(string ticketNumber in ticketFolderNumberList)
-            //{
-            //    Console.WriteLine(ticketNumber);
-            //}
-
-
-
-
-
-
-
-            //var firstNotSecond = openIncidentList.Except(ticketFolderNumberList).ToList();
-            //Console.WriteLine("\nNo log files found for open tickets:");
-
-            //foreach(string diff in firstNotSecond)
-            //{
-            //    Console.WriteLine(diff);
-            //}
-
-
-
-
-
-            //var SecondNotFirst = ticketFolderNumberList.Except(cmdArgs).ToList();
-
-            //Console.WriteLine("\nTicket Folders to be archived.");
-
-            //foreach(string diff in SecondNotFirst)
-            //{
-            //    Console.WriteLine(diff);
-            //}
-
-
-            //foreach(string diff in cmdArgs)
-            //{
-            //    if (dirList.Contains(diff) ==true)
-            //    {
-            //        foreach(string dir in dirList)
-            //        { 
-            //        Console.WriteLine(dir);
-            //        }
-            //    }
-            //        //Console.WriteLine(diff);
-            //}
-
-            //foreach(string folder in dirList)
-
-            //    if(openIncidentList.Contains(folder)==true)
-            //    {
-            //        Console.WriteLine(folder);
-            //    }
-
-
-
-            List<string> sqliteDeleteFolder = new List<string>();
-
-            //Console.WriteLine("\nTicket from sqlite list: :sqliteTicket:");
+                                 
             foreach (string objTicket in sqliteTicket)
             {
                 //Console.WriteLine(objTicket);
@@ -208,9 +79,7 @@ namespace crmLogCleanup
                 }
             }
 
-            //Console.WriteLine("\nDelete this ticket folder: :sqliteDeleteFolder:");
-
-
+            
             Console.WriteLine("Tickets marked as not Active in SQLite Database");
             foreach (string objFolderDelete in sqliteDeleteFolder)
             {
@@ -248,10 +117,7 @@ namespace crmLogCleanup
 
             Console.WriteLine("Would you like to cleanup the folders above? [y/n] | Default = N");
             String deleteResponse = Console.ReadLine();
-            //deleteResponse = "N";
-            //Console.ReadLine();
             Console.WriteLine("You have chosen: {0}", deleteResponse);
-            //Console.Read();
 
             if(deleteResponse == "y")
             {
@@ -259,7 +125,7 @@ namespace crmLogCleanup
                 goto DELETE;
                 
             }
-            else if (deleteResponse =="N")
+            else if (deleteResponse =="n")
             {
                 m_dbConnection.Close();
                 return;
