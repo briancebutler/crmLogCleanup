@@ -123,11 +123,15 @@ namespace crmLogCleanup
 
             foreach (string subDirList in content)
             {
-                if (subDirList.Contains("18"))
+                if (subDirList.Contains("sendLogFiles"))
                 {
 
 
                     //Console.WriteLine(subDirList);
+                    
+                }
+                else if(subDirList.Contains("18"))
+                {
                     dirList.Add(subDirList);//Full path to existing folders on the file system that are for a ticket.
                     ticketFolderNumberList.Add(Path.GetFileName(subDirList));
                 }
@@ -280,6 +284,30 @@ namespace crmLogCleanup
             }
 
             m_dbConnection.Close();
+
+
+            //Folder cleanup
+
+            var subDirs = Directory.GetDirectories(root);
+
+            foreach (string dir in subDirs)
+            {
+                //Console.WriteLine(dir);
+
+                    //Console.WriteLine(dir);
+                if (!Directory.EnumerateDirectories(dir).Any())
+                {
+                    Console.WriteLine(dir);
+                    Directory.Delete(dir);
+                }
+                
+
+            }
+            
+
+            //bool isEmpty = !Directory.EnumerateFiles(path).Any();
+
+
 
             Console.WriteLine("Done Exit ....");
             Console.Read();
