@@ -159,7 +159,7 @@ namespace crmLogCleanup
             }
             //Folder cleanup
 
-            Console.WriteLine("Done Exit ....");
+            Console.WriteLine("Done press enter to exit ....");
             Console.Read();
 
         }
