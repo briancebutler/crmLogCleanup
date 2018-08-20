@@ -165,3 +165,8 @@ namespace crmLogCleanup
         }
     }
 }
+
+
+
+//pull from sql lite db location when its the same as the binary. 
+//modify startup to look for inactive cases then prompt if there is any or close if there is not.
