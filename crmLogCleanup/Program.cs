@@ -23,6 +23,9 @@ namespace crmLogCleanup
             List<string> sqliteFolderSelected = new List<string>();
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
+            
+
+
 
             // Open SQLite DB
             SQLiteConnection m_dbConnection;
@@ -136,6 +139,7 @@ namespace crmLogCleanup
 
                 try
                 {
+                    //var tmpPath = @"\\?\" + objFolder;
                     Console.WriteLine(objFolder);
                     Directory.Delete(objFolder, true);
                     string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
@@ -156,6 +160,13 @@ namespace crmLogCleanup
                     Console.WriteLine("Unable to access a file in the folder " + objFolder);
                     Console.ForegroundColor = defaultForeground;
                 }
+                catch(System.UnauthorizedAccessException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Unauthorized access to " + objFolder);
+                    Console.ForegroundColor = defaultForeground;
+                }
+
             Console.WriteLine("Deleting: {0}", objFolder);
 
 
