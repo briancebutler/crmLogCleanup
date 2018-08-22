@@ -13,8 +13,9 @@ namespace crmLogCleanup
 
         static void Main(string[] args)
         {
+            ConsoleColor defaultForeground = Console.ForegroundColor;
             string inputArgs = "crmLogCleanup";
-            string root = "C:\\~LogFiles\\~CurrentLogs";
+            string root = "C:\\~LogFiles";
             List<string> openIncidentList = new List<string>(); //List for tar file selection
             List<string> dirList = new List<string>(); //List for tar file selection
             List<string> ticketFolderNumberList = new List<string>(); //list to store just the ticket number from the existing folders.
@@ -131,13 +132,33 @@ namespace crmLogCleanup
             DELETE:
             foreach(string objFolder in sqliteFolderSelected)
             {
-                Directory.Delete(objFolder, true);
-                Console.WriteLine("Deleting: {0}", objFolder);
+                //Console.WriteLine("\\?\" + objFolder);
 
-                string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
-                Console.WriteLine(sql4);
-                SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
-                command4.ExecuteNonQuery();
+                try
+                {
+                    Console.WriteLine(objFolder);
+                    Directory.Delete(objFolder, true);
+                    string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
+                    Console.WriteLine(sql4);
+                    SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
+                    command4.ExecuteNonQuery();
+                }
+                catch (System.IO.DirectoryNotFoundException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Unable to completly delete " + objFolder);
+                    Console.ForegroundColor = defaultForeground;
+                    //Directory.Delete("\\\\?\\" + objFolder);
+                }
+                catch (System.IO.IOException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Unable to access a file in the folder " + objFolder);
+                    Console.ForegroundColor = defaultForeground;
+                }
+            Console.WriteLine("Deleting: {0}", objFolder);
+
+
 
             }
 
