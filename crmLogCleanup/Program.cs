@@ -137,39 +137,53 @@ namespace crmLogCleanup
             {
                 //Console.WriteLine("\\?\" + objFolder);
 
-                try
+                if (!Directory.Exists(objFolder))
                 {
-                    //var tmpPath = @"\\?\" + objFolder;
-                    Console.WriteLine(objFolder);
-                    Directory.Delete(objFolder, true);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Directory {0} no longer exists", objFolder);
+                    Console.ForegroundColor = defaultForeground;
                     string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
-                    Console.WriteLine(sql4);
                     SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
                     command4.ExecuteNonQuery();
                 }
-                catch (System.IO.DirectoryNotFoundException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unable to completly delete " + objFolder);
-                    Console.ForegroundColor = defaultForeground;
-                    //Directory.Delete("\\\\?\\" + objFolder);
-                }
-                catch (System.IO.IOException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Unable to access a file in the folder " + objFolder);
-                    Console.ForegroundColor = defaultForeground;
-                }
-                catch(System.UnauthorizedAccessException)
-                {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("Unauthorized access to " + objFolder);
-                    Console.ForegroundColor = defaultForeground;
-                }
 
-            Console.WriteLine("Deleting: {0}", objFolder);
+                else
+                {
+                    try
+                    {
+                        //var tmpPath = @"\\?\" + objFolder;
+                        Console.WriteLine(objFolder);
+                        //Directory.Delete(@"\\?\" + "C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
+                        Directory.Delete(objFolder, true);
+                        string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
+                        Console.WriteLine(sql4);
+                        SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
+                        command4.ExecuteNonQuery();
+                    }
+                    catch (System.IO.DirectoryNotFoundException)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
+                        Console.WriteLine("Unable to completly delete " + objFolder);
+                        Console.ForegroundColor = defaultForeground;
+                        //Directory.Delete("\\\\?\\" + objFolder);
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Unable to access a file in the folder " + objFolder);
+                        Console.ForegroundColor = defaultForeground;
+                    }
+                    catch (System.UnauthorizedAccessException)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("Unauthorized access to " + objFolder);
+                        Console.ForegroundColor = defaultForeground;
+                    }
 
+                    Console.WriteLine("Deleting: {0}", objFolder);
 
+                }
 
             }
 
