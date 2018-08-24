@@ -23,9 +23,13 @@ namespace crmLogCleanup
             List<string> sqliteFolderSelected = new List<string>();
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
-            
 
+            string objDestFolder = "c:\\temp\\del\\";
 
+            if(!Directory.Exists(objDestFolder))
+            {
+                Directory.CreateDirectory(objDestFolder);
+            }
 
             // Open SQLite DB
             SQLiteConnection m_dbConnection;
@@ -165,6 +169,8 @@ namespace crmLogCleanup
                         Console.ForegroundColor = ConsoleColor.Red;
                         //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
                         Console.WriteLine("Unable to completly delete " + objFolder);
+                        Console.WriteLine("Moving folder {0}to shorter path {1} to attempt delete", objFolder, objDestFolder);
+                        Directory.Move(objFolder, objDestFolder + "\\1");
                         Console.ForegroundColor = defaultForeground;
                         //Directory.Delete("\\\\?\\" + objFolder);
                     }
@@ -181,6 +187,11 @@ namespace crmLogCleanup
                         Console.ForegroundColor = defaultForeground;
                     }
 
+                    if (Directory.Exists(objDestFolder))
+                    {
+                        Directory.Delete(objDestFolder, true);
+                    }
+                    
                     Console.WriteLine("Deleting: {0}", objFolder);
 
                 }
