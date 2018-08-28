@@ -90,7 +90,7 @@ namespace crmLogCleanup
             }
 
             
-            Console.WriteLine("Tickets marked as not Active in SQLite Database");
+            //Console.WriteLine("Tickets marked as not Active in SQLite Database");
             foreach (string objFolderDelete in sqliteDeleteFolder)
             {
                 string sqlQuery = "UPDATE Incident SET Active = 'NO' WHERE Ticket ='" + objFolderDelete + "'";
@@ -118,25 +118,35 @@ namespace crmLogCleanup
                 Console.WriteLine(objFolder);
             }
 
-
+            bool isEmpty = sqliteFolderSelected.Any();
+            if(isEmpty)
+            { 
             Console.WriteLine("Would you like to cleanup the folders above? [y/n] | Default = N");
             String deleteResponse = Console.ReadLine();
             Console.WriteLine("You have chosen: {0}", deleteResponse);
 
-            if(deleteResponse == "y")
-            {
+                    if(deleteResponse == "y")
+                    {
 
-                goto DELETE;
+                        goto DELETE;
                 
+                    }
+                    else if (deleteResponse =="n")
+                    {
+                        m_dbConnection.Close();
+                        return;
+                    }
+                    else
+                    {
+                        m_dbConnection.Close();
+                        return;
+                    }
             }
-            else if (deleteResponse =="n")
-            {
-                m_dbConnection.Close();
-                return;
-            }
+
             else
             {
-                m_dbConnection.Close();
+                Console.WriteLine("Nothing to delete. Press enter to exit.");
+                Console.Read();
                 return;
             }
 
