@@ -24,12 +24,16 @@ namespace crmLogCleanup
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
 
-            string objDestFolder = "c:\\temp\\del\\";
+            string objDestFolder = "c:\\1\\";
 
-            if(!Directory.Exists(objDestFolder))
+            
+            if (!Directory.Exists(objDestFolder))
             {
+                //Directory.Delete(objDestFolder, true);
                 Directory.CreateDirectory(objDestFolder);
             }
+
+            //
 
             // Open SQLite DB
             SQLiteConnection m_dbConnection;
@@ -158,7 +162,8 @@ namespace crmLogCleanup
                         //var tmpPath = @"\\?\" + objFolder;
                         Console.WriteLine(objFolder);
                         //Directory.Delete(@"\\?\" + "C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
-                        Directory.Delete(objFolder, true);
+                        Directory.Move(objFolder, objDestFolder + "\\1");
+                        Directory.Delete(objDestFolder, true);
                         string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                         Console.WriteLine(sql4);
                         SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
@@ -169,15 +174,15 @@ namespace crmLogCleanup
                         Console.ForegroundColor = ConsoleColor.Red;
                         //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
                         Console.WriteLine("Unable to completly delete " + objFolder);
-                        Console.WriteLine("Moving folder {0}to shorter path {1} to attempt delete", objFolder, objDestFolder);
-                        Directory.Move(objFolder, objDestFolder + "\\1");
+                        Console.WriteLine("Moving folder {0} to shorter path {1} to attempt delete", objFolder, objDestFolder);
+                        
                         Console.ForegroundColor = defaultForeground;
                         //Directory.Delete("\\\\?\\" + objFolder);
                     }
                     catch (System.IO.IOException)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Unable to access a file in the folder " + objFolder);
+                        Console.WriteLine("Unable to access the folder {0} please ensure\nthat you do not have it open in explorer, gxtail, notepad, etc.\nOnce closed please re-reun the tool.",objFolder);
                         Console.ForegroundColor = defaultForeground;
                     }
                     catch (System.UnauthorizedAccessException)
