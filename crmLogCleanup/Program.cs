@@ -69,23 +69,25 @@ namespace crmLogCleanup
             inputArgs = inputArgs.Remove(0,8);
             string[] cmdArgs = inputArgs.Split('/');
 
-            
-            foreach(string incident in cmdArgs)
+            Console.WriteLine("All Open Tickets");
+            foreach (string incident in cmdArgs)
             {
                 if(incident.Contains("-"))
                 {
                     openIncidentList.Add(incident);
+                    Console.WriteLine(incident);
                 }
             }
             //Import input arguments
 
-                                 
+            Console.WriteLine("Inactive Tickets");
             foreach (string objTicket in sqliteTicket)
             {
 
                 if (!openIncidentList.Contains(objTicket))
                 {
                     sqliteDeleteFolder.Add(objTicket);
+                    Console.WriteLine(objTicket);
                 }
             }
 
@@ -163,17 +165,20 @@ namespace crmLogCleanup
                     string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                     SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
                     command4.ExecuteNonQuery();
+                    //goto reStart;
                 }
 
                 else
                 {
+                    //retry:
                     try
                     {
+                        int numFolder = 1;
                         //var tmpPath = @"\\?\" + objFolder;
                         Console.WriteLine(objFolder);
                         //Directory.Delete(@"\\?\" + "C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
-                        Directory.Move(objFolder, objDestFolder + "\\1");
-                        Directory.Delete(objDestFolder, true);
+                        Directory.Move(objFolder, objDestFolder + "\\" + numFolder++);
+                        //Directory.Delete(objDestFolder, true);
                         string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                         Console.WriteLine(sql4);
                         SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
@@ -183,10 +188,15 @@ namespace crmLogCleanup
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
-                        Console.WriteLine("Unable to completly delete " + objFolder);
+                        Console.WriteLine(objFolder + objDestFolder + "\\" + "1");
+                        Directory.Move(objFolder, objDestFolder);
                         Console.WriteLine("Moving folder {0} to shorter path {1} to attempt delete", objFolder, objDestFolder);
-                        
+                        if (Directory.Exists(objDestFolder))
+                        {
+                            Directory.Delete(objDestFolder, true);
+                        }
                         Console.ForegroundColor = defaultForeground;
+                        //goto DELETE;
                         //Directory.Delete("\\\\?\\" + objFolder);
                     }
                     catch (System.IO.IOException)
@@ -213,7 +223,7 @@ namespace crmLogCleanup
 
             }
 
-            m_dbConnection.Close();
+            
 
 
             //Folder cleanup
@@ -226,9 +236,11 @@ namespace crmLogCleanup
                 {
                     Console.WriteLine(dir);
                     Directory.Delete(dir);
+                    //goto DELETE;
                 }
                 
             }
+            m_dbConnection.Close();
             //Folder cleanup
 
             Console.WriteLine("Done press enter to exit ....");
