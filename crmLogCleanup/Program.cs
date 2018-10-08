@@ -69,25 +69,25 @@ namespace crmLogCleanup
             inputArgs = inputArgs.Remove(0,8);
             string[] cmdArgs = inputArgs.Split('/');
 
-            Console.WriteLine("All Open Tickets");
+            //Console.WriteLine("All Open Tickets");
             foreach (string incident in cmdArgs)
             {
                 if(incident.Contains("-"))
                 {
                     openIncidentList.Add(incident);
-                    Console.WriteLine(incident);
+                    //Console.WriteLine(incident);
                 }
             }
             //Import input arguments
 
-            Console.WriteLine("Inactive Tickets");
+            //Console.WriteLine("Inactive Tickets");
             foreach (string objTicket in sqliteTicket)
             {
 
                 if (!openIncidentList.Contains(objTicket))
                 {
                     sqliteDeleteFolder.Add(objTicket);
-                    Console.WriteLine(objTicket);
+                    //Console.WriteLine(objTicket);
                 }
             }
 
@@ -188,9 +188,13 @@ namespace crmLogCleanup
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
-                        Console.WriteLine(objFolder + objDestFolder + "\\" + "1");
+                        //Console.WriteLine(objFolder + objDestFolder + "\\" + "1");
                         Directory.Move(objFolder, objDestFolder);
-                        Console.WriteLine("Moving folder {0} to shorter path {1} to attempt delete", objFolder, objDestFolder);
+                        string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
+                        Console.WriteLine(sql4);
+                        SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
+                        command4.ExecuteNonQuery();
+                        //Console.WriteLine("Moving folder {0} to shorter path {1} to attempt delete", objFolder, objDestFolder);
                         if (Directory.Exists(objDestFolder))
                         {
                             Directory.Delete(objDestFolder, true);
@@ -254,3 +258,4 @@ namespace crmLogCleanup
 
 //pull from sql lite db location when its the same as the binary. 
 //modify startup to look for inactive cases then prompt if there is any or close if there is not.
+// add chnages to close out gxtail, notepad, explorer windows if they are open.
