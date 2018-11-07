@@ -26,31 +26,6 @@ namespace crmLogCleanup
 
             string objDestFolder = "c:\\1\\";
 
-            
-            if (!Directory.Exists(objDestFolder))
-            {
-                //Directory.Delete(objDestFolder, true);
-                Directory.CreateDirectory(objDestFolder);
-            }
-
-            //
-
-            // Open SQLite DB
-            SQLiteConnection m_dbConnection;
-            m_dbConnection = new SQLiteConnection("Data Source=F:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
-            m_dbConnection.Open();
-            // Open SQLite DB
-
-            //Query SQLite DB
-            string sql = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                sqliteTicket.Add(Convert.ToString(reader["Ticket"]));
-                sqliteDeleted.Add(Convert.ToString(reader["Deleted"]));
-            }
-            //Query SQLite DB
 
             //Import input arguments
             if (args == null)
@@ -66,24 +41,66 @@ namespace crmLogCleanup
                 }
             }
 
-            inputArgs = inputArgs.Remove(0,8);
+            inputArgs = inputArgs.Remove(0, 8);
             string[] cmdArgs = inputArgs.Split('/');
 
             //Console.WriteLine("All Open Tickets");
             foreach (string incident in cmdArgs)
             {
-                if(incident.Contains("-"))
+                if (incident.Contains("-"))
                 {
                     openIncidentList.Add(incident);
                     //Console.WriteLine(incident);
+                    Console.WriteLine("Active Incident: " + incident);
                 }
             }
             //Import input arguments
 
+
+
+
+            if (!Directory.Exists(objDestFolder))
+            {
+                //Directory.Delete(objDestFolder, true);
+                Directory.CreateDirectory(objDestFolder);
+            }
+
+            //
+
+            // Open SQLite DB
+            SQLiteConnection m_dbConnection;
+            m_dbConnection = new SQLiteConnection("Data Source=F:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
+            m_dbConnection.Open();
+            // Open SQLite DB
+
+            //Query SQLite DB
+
+            // Added the below section to set active in the case where the browser does not respond and marks all cases as 'Active' = 'NO'. If you re reun the tool again it will update the database table in the to YES for all tickets that are still open.
+            foreach(string objTicket in openIncidentList)
+            {
+                //string sql2 = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
+                string sql2 = "UPDATE Incident SET Active = 'YES' WHERE Ticket ='" + objTicket + "'";
+                Console.WriteLine("SQL2: " + sql2);
+                SQLiteCommand command2 = new SQLiteCommand(sql2, m_dbConnection);
+                command2.ExecuteNonQuery();
+            }
+
+            string sql = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
+            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                sqliteTicket.Add(Convert.ToString(reader["Ticket"]));
+                sqliteDeleted.Add(Convert.ToString(reader["Deleted"]));
+            }
+            //Query SQLite DB
+
+
+
             //Console.WriteLine("Inactive Tickets");
             foreach (string objTicket in sqliteTicket)
             {
-
+                //Console.WriteLine("Active Tickets: " + objTicket);
                 if (!openIncidentList.Contains(objTicket))
                 {
                     sqliteDeleteFolder.Add(objTicket);
