@@ -51,7 +51,7 @@ namespace crmLogCleanup
                 {
                     openIncidentList.Add(incident);
                     //Console.WriteLine(incident);
-                    Console.WriteLine("Active Incident: " + incident);
+                    //Console.WriteLine("Active Incident: " + incident);
                 }
             }
             //Import input arguments
@@ -80,7 +80,7 @@ namespace crmLogCleanup
             {
                 //string sql2 = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
                 string sql2 = "UPDATE Incident SET Active = 'YES' WHERE Ticket ='" + objTicket + "'";
-                Console.WriteLine("SQL2: " + sql2);
+                //Console.WriteLine("SQL2: " + sql2);
                 SQLiteCommand command2 = new SQLiteCommand(sql2, m_dbConnection);
                 command2.ExecuteNonQuery();
             }
