@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Data.SQLite;
+using System.Diagnostics;
 namespace crmLogCleanup
 {
     class Program
@@ -233,11 +234,36 @@ namespace crmLogCleanup
                         Console.ForegroundColor = defaultForeground;
                     }
 
+                    string emptyFolder = "c:\\emptyfolder";
+
+                    if (!Directory.Exists(emptyFolder))
+                    {
+                        Directory.CreateDirectory(emptyFolder);
+                    }
+                    string cmdPath = "C:\\Windows\\System32\\robocopy.exe";
+                    ProcessStartInfo pro = new ProcessStartInfo();
+                    pro.WindowStyle = ProcessWindowStyle.Hidden;
+                    pro.FileName = cmdPath; //Added for extraction of zip file contents to extract server name per top level cab.
+
+
                     if (Directory.Exists(objDestFolder))
                     {
-                        Directory.Delete(objDestFolder, true);
+                        //Directory.Delete(objDestFolder, true);
+
+                        pro.Arguments = string.Format("{0} {1} /MIR", emptyFolder, objDestFolder);    // extracts the contents of the 7 zip file.
+                        Process x = Process.Start(pro); //Added for extraction of zip file contents to extract server name per top level cab.
+                        x.WaitForExit();
+
+
                     }
-                    
+
+
+                    if (Directory.Exists(emptyFolder))
+                    {
+                        Directory.Delete(emptyFolder);
+                    }
+
+
                     Console.WriteLine("Deleting: {0}", objFolder);
 
                 }
