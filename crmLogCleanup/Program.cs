@@ -240,18 +240,21 @@ namespace crmLogCleanup
                     {
                         Directory.CreateDirectory(emptyFolder);
                     }
+
+
+                    //Added the following to use robocopy for cleanup of files that contain long file paths.
                     string cmdPath = "C:\\Windows\\System32\\robocopy.exe";
                     ProcessStartInfo pro = new ProcessStartInfo();
                     pro.WindowStyle = ProcessWindowStyle.Hidden;
-                    pro.FileName = cmdPath; //Added for extraction of zip file contents to extract server name per top level cab.
+                    pro.FileName = cmdPath; 
 
 
                     if (Directory.Exists(objDestFolder))
                     {
-                        //Directory.Delete(objDestFolder, true);
+                        //Directory.Delete(objDestFolder, true); OLD CLEANUP METHOD
 
-                        pro.Arguments = string.Format("{0} {1} /MIR", emptyFolder, objDestFolder);    // extracts the contents of the 7 zip file.
-                        Process x = Process.Start(pro); //Added for extraction of zip file contents to extract server name per top level cab.
+                        pro.Arguments = string.Format("{0} {1} /MIR", emptyFolder, objDestFolder);  //robocopy.exe c:\emptyfolder c:\1 /MIR
+                        Process x = Process.Start(pro); 
                         x.WaitForExit();
 
 
