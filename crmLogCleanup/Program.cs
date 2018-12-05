@@ -234,7 +234,7 @@ namespace crmLogCleanup
                         Console.ForegroundColor = defaultForeground;
                     }
 
-                    string emptyFolder = "c:\\emptyfolder";
+                    string emptyFolder = "c:\\emptyfolder"; //empty folder needed for robocopy.exe
 
                     if (!Directory.Exists(emptyFolder))
                     {
