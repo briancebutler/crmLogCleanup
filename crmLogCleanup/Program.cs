@@ -25,7 +25,7 @@ namespace crmLogCleanup
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
 
-            string objDestFolder = "c:\\1\\";
+            string objDestFolder = "c:\\1\\"; //staging dir used to copy longer file to before cleaning them up. I could probably do away with this since we are now using robocopy to perform the deletes.
 
 
             //Import input arguments
@@ -80,19 +80,19 @@ namespace crmLogCleanup
             foreach(string objTicket in openIncidentList)
             {
                 //string sql2 = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
-                string sql2 = "UPDATE Incident SET Active = 'YES' WHERE Ticket ='" + objTicket + "'";
+                string sql2 = "UPDATE Incident SET Active = 'YES' WHERE Ticket ='" + objTicket + "'"; //Problems with CRM may cause the tool to incorrectly mark incidents are deleted. This will force them to active if the tool is rereun in the case of that happening.
                 //Console.WriteLine("SQL2: " + sql2);
                 SQLiteCommand command2 = new SQLiteCommand(sql2, m_dbConnection);
                 command2.ExecuteNonQuery();
             }
 
-            string sql = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
+            string sql = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'"; //create a list of active databasess 
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 sqliteTicket.Add(Convert.ToString(reader["Ticket"]));
-                sqliteDeleted.Add(Convert.ToString(reader["Deleted"]));
+                sqliteDeleted.Add(Convert.ToString(reader["Deleted"])); //No longer used could be cleaned up.
             }
             //Query SQLite DB
 
@@ -104,7 +104,7 @@ namespace crmLogCleanup
                 //Console.WriteLine("Active Tickets: " + objTicket);
                 if (!openIncidentList.Contains(objTicket))
                 {
-                    sqliteDeleteFolder.Add(objTicket);
+                    sqliteDeleteFolder.Add(objTicket); //create a list of tickets that need to be cleaned up.
                     //Console.WriteLine(objTicket);
                 }
             }
@@ -113,7 +113,7 @@ namespace crmLogCleanup
             //Console.WriteLine("Tickets marked as not Active in SQLite Database");
             foreach (string objFolderDelete in sqliteDeleteFolder)
             {
-                string sqlQuery = "UPDATE Incident SET Active = 'NO' WHERE Ticket ='" + objFolderDelete + "'";
+                string sqlQuery = "UPDATE Incident SET Active = 'NO' WHERE Ticket ='" + objFolderDelete + "'"; //update sql to mark ticket in sqliteDeleteFolder list to active=no
                 Console.WriteLine(sqlQuery);
                 SQLiteCommand command2 = new SQLiteCommand(sqlQuery, m_dbConnection);
                 command2.ExecuteNonQuery();
