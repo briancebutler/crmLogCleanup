@@ -70,7 +70,7 @@ namespace crmLogCleanup
 
             // Open SQLite DB
             SQLiteConnection m_dbConnection;
-            m_dbConnection = new SQLiteConnection("Data Source=F:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
+            m_dbConnection = new SQLiteConnection("Data Source=C:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
             m_dbConnection.Open();
             // Open SQLite DB
 
@@ -256,8 +256,6 @@ namespace crmLogCleanup
                         pro.Arguments = string.Format("{0} {1} /MIR", emptyFolder, objDestFolder);  //robocopy.exe c:\emptyfolder c:\1 /MIR
                         Process x = Process.Start(pro); 
                         x.WaitForExit();
-
-
                     }
 
 
