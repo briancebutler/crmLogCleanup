@@ -25,22 +25,7 @@ namespace crmLogCleanup
             List<string> sqliteFolderSelected = new List<string>();
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
-            //List<string> sqliteAllDeleted = new List<string>(); 
             string objDestFolder = "c:\\1\\"; //staging dir used to copy longer file to before cleaning them up. I could probably do away with this since we are now using robocopy to perform the deletes.
-
-
-            //foreach (var directory in Directory.GetDirectories(root))
-            //{
-            //    //processDirectory(directory);
-            //    if (Directory.GetFileSystemEntries(directory).Length == 0)
-
-            //    {
-            //        //Directory.Delete(directory, false);
-            //        Console.WriteLine("Confirm directory emtpy" + directory);
-            //    }
-            //}
-
-
 
 
             //Import input arguments
@@ -60,56 +45,37 @@ namespace crmLogCleanup
             inputArgs = inputArgs.Remove(0, 8);
             string[] cmdArgs = inputArgs.Split('/');
 
-            //Console.WriteLine("All Open Tickets");
+            //Get list of open tickets.
             foreach (string incident in cmdArgs)
             {
                 if (incident.Contains("-"))
                 {
                     openIncidentList.Add(incident);
-                    //Console.WriteLine(incident);
-                    //Console.WriteLine("Active Incident: " + incident);
                 }
             }
-            //Import input arguments
-
-
-
-
-
-
-
-
-
-
 
 
 
             if (!Directory.Exists(objDestFolder))
             {
-                //Directory.Delete(objDestFolder, true);
                 Directory.CreateDirectory(objDestFolder);
             }
-
-            //
 
             // Open SQLite DB
             Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
             SQLiteConnection m_dbConnection;
             string sqlLiteDBFile = ".\\sqlLiteDBFile.db";
             string path2 = Directory.GetCurrentDirectory();
-            //m_dbConnection = new SQLiteConnection("Data Source=C:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
             m_dbConnection = new SQLiteConnection("Data Source=.\\sqlLiteDBFile.db;Version=3;");
 
             Console.WriteLine("DB File is located in " + path2 + sqlLiteDBFile);
             m_dbConnection.Open();
             // Open SQLite DB
 
-            //Query SQLite DB
 
             // Added the below section to set active in the case where the browser does not respond and marks all cases as 'Active' = 'NO'. If you re reun the tool again it will update the database table in the to YES for all tickets that are still open.
             foreach(string objTicket in openIncidentList)
             {
-                //string sql2 = "select Ticket,FolderSelected,Deleted from Incident where `Active` = 'YES'";
                 string sql2 = "UPDATE Incident SET Active = 'YES' WHERE Ticket ='" + objTicket + "'"; //Problems with CRM may cause the tool to incorrectly mark incidents are deleted. This will force them to active if the tool is rereun in the case of that happening.
                 //Console.WriteLine("SQL2: " + sql2);
                 SQLiteCommand command2 = new SQLiteCommand(sql2, m_dbConnection);
@@ -136,7 +102,6 @@ namespace crmLogCleanup
                 if (!openIncidentList.Contains(objTicket))
                 {
                     sqliteDeleteFolder.Add(objTicket); //create a list of tickets that need to be cleaned up.
-                    //Console.WriteLine(objTicket);
                 }
             }
 
@@ -205,7 +170,6 @@ namespace crmLogCleanup
             DELETE:
             foreach(string objFolder in sqliteFolderSelected)
             {
-                //Console.WriteLine("\\?\" + objFolder);
 
                 if (!Directory.Exists(objFolder))
                 {
@@ -215,20 +179,15 @@ namespace crmLogCleanup
                     string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                     SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
                     command4.ExecuteNonQuery();
-                    //goto reStart;
                 }
 
                 else
                 {
-                    //retry:
                     try
                     {
                         int numFolder = 1;
-                        //var tmpPath = @"\\?\" + objFolder;
                         Console.WriteLine(objFolder);
-                        //Directory.Delete(@"\\?\" + "C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
                         Directory.Move(objFolder, objDestFolder + "\\" + numFolder++);
-                        //Directory.Delete(objDestFolder, true);
                         string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                         Console.WriteLine(sql4);
                         SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
@@ -237,22 +196,19 @@ namespace crmLogCleanup
                     catch (System.IO.DirectoryNotFoundException)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        //Directory.Delete(@"\\?\C:\\~LogFiles\\ChildrensHospitalColorado\\180822-534\\sendLogFiles_FE357_2018_08_22_11_21_14_1159319\\prdcvcs\\AllUsersProfile_1534958497\\LogFiles\\Instance001\\InstallLogs\\2017-08-23 08-27-48");
-                        //Console.WriteLine(objFolder + objDestFolder + "\\" + "1");
                         Directory.Move(objFolder, objDestFolder);
                         string sql4 = "UPDATE Incident SET Deleted = 'YES' WHERE FolderSelected ='" + objFolder + "'";
                         Console.WriteLine(sql4);
                         SQLiteCommand command4 = new SQLiteCommand(sql4, m_dbConnection);
                         command4.ExecuteNonQuery();
-                        //Console.WriteLine("Moving folder {0} to shorter path {1} to attempt delete", objFolder, objDestFolder);
+
                         if (Directory.Exists(objDestFolder))
                         {
                             Directory.Delete(objDestFolder, true);
                             processDirectory(@"C:\~LogFiles");
                         }
                         Console.ForegroundColor = defaultForeground;
-                        //goto DELETE;
-                        //Directory.Delete("\\\\?\\" + objFolder);
+
                     }
                     catch (System.IO.IOException)
                     {
