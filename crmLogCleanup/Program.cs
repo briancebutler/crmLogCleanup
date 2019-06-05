@@ -14,6 +14,7 @@ namespace crmLogCleanup
 
         static void Main(string[] args)
         {
+            
             ConsoleColor defaultForeground = Console.ForegroundColor;
             string inputArgs = "crmLogCleanup";
             string root = "C:\\~LogFiles";
@@ -24,8 +25,22 @@ namespace crmLogCleanup
             List<string> sqliteFolderSelected = new List<string>();
             List<string> sqliteDeleted = new List<string>();
             List<string> sqliteDeleteFolder = new List<string>();
-
+            //List<string> sqliteAllDeleted = new List<string>(); 
             string objDestFolder = "c:\\1\\"; //staging dir used to copy longer file to before cleaning them up. I could probably do away with this since we are now using robocopy to perform the deletes.
+
+
+            foreach (var directory in Directory.GetDirectories(root))
+            {
+                //processDirectory(directory);
+                if (Directory.GetFileSystemEntries(directory).Length == 0)
+
+                {
+                    //Directory.Delete(directory, false);
+                    Console.WriteLine("Confirm directory emtpy" + directory);
+                }
+            }
+
+
 
 
             //Import input arguments
@@ -60,6 +75,15 @@ namespace crmLogCleanup
 
 
 
+
+
+
+
+
+
+
+
+
             if (!Directory.Exists(objDestFolder))
             {
                 //Directory.Delete(objDestFolder, true);
@@ -69,8 +93,14 @@ namespace crmLogCleanup
             //
 
             // Open SQLite DB
+            Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
             SQLiteConnection m_dbConnection;
-            m_dbConnection = new SQLiteConnection("Data Source=C:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
+            string sqlLiteDBFile = ".\\sqlLiteDBFile.db";
+            string path2 = Directory.GetCurrentDirectory();
+            //m_dbConnection = new SQLiteConnection("Data Source=C:\\C#\\getLogsV15\\getLogsV15\\getLogsV15\\bin\\Debug\\sqlLiteDBFile.db;Version=3;");
+            m_dbConnection = new SQLiteConnection("Data Source=.\\sqlLiteDBFile.db;Version=3;");
+
+            Console.WriteLine("DB File is located in " + path2 + sqlLiteDBFile);
             m_dbConnection.Open();
             // Open SQLite DB
 
@@ -95,6 +125,7 @@ namespace crmLogCleanup
                 sqliteDeleted.Add(Convert.ToString(reader["Deleted"])); //No longer used could be cleaned up.
             }
             //Query SQLite DB
+
 
 
 
@@ -165,6 +196,7 @@ namespace crmLogCleanup
 
             else
             {
+                processDirectory(@"C:\~LogFiles");
                 Console.WriteLine("Nothing to delete. Press enter to exit.");
                 Console.Read();
                 return;
@@ -216,6 +248,7 @@ namespace crmLogCleanup
                         if (Directory.Exists(objDestFolder))
                         {
                             Directory.Delete(objDestFolder, true);
+                            processDirectory(@"C:\~LogFiles");
                         }
                         Console.ForegroundColor = defaultForeground;
                         //goto DELETE;
@@ -290,11 +323,27 @@ namespace crmLogCleanup
             }
             m_dbConnection.Close();
             //Folder cleanup
-
+            processDirectory(@"C:\~LogFiles");
             Console.WriteLine("Done press enter to exit ....");
             Console.Read();
 
         }
+
+        //Function added to cleanup empty folders 06/05/19
+        private static void processDirectory(string startLocation)
+        {
+            foreach (var directory in Directory.GetDirectories(startLocation))
+            {
+                processDirectory(directory);
+                if (Directory.GetFiles(directory).Length == 0 &&
+                    Directory.GetDirectories(directory).Length == 0)
+                {
+                    Console.WriteLine("Cleaning up emtpy folder " + directory);
+                    Directory.Delete(directory, false);
+                }
+            }
+        }
+
     }
 }
 
