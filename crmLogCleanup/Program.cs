@@ -29,16 +29,16 @@ namespace crmLogCleanup
             string objDestFolder = "c:\\1\\"; //staging dir used to copy longer file to before cleaning them up. I could probably do away with this since we are now using robocopy to perform the deletes.
 
 
-            foreach (var directory in Directory.GetDirectories(root))
-            {
-                //processDirectory(directory);
-                if (Directory.GetFileSystemEntries(directory).Length == 0)
+            //foreach (var directory in Directory.GetDirectories(root))
+            //{
+            //    //processDirectory(directory);
+            //    if (Directory.GetFileSystemEntries(directory).Length == 0)
 
-                {
-                    //Directory.Delete(directory, false);
-                    Console.WriteLine("Confirm directory emtpy" + directory);
-                }
-            }
+            //    {
+            //        //Directory.Delete(directory, false);
+            //        Console.WriteLine("Confirm directory emtpy" + directory);
+            //    }
+            //}
 
 
 
